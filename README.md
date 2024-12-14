@@ -57,6 +57,8 @@
     예외 발생하기 전 Redis 와 MySQL 동기화 &rarr; API 호출 &rarr; 끊어진 사용자부터 알림 재발송<br>
 <br>
 (3) 에서 고려 사항
-  - 회차별 재입고 알림을 받은 유저 목록 저장: ProductUserNotificationHistory 테이블에 저장<br>
+  - 회차별 재입고 알림을 받은 유저 목록 저장: ProductUserNotificationHistory 테이블에 저장
+<br>
+
 ## 💡 서비스 구현 중 고민과 트러블 슈팅
      
