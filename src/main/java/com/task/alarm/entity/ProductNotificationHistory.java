@@ -1,8 +1,10 @@
 package com.task.alarm.entity;
 
 import jakarta.persistence.*;
+import lombok.RequiredArgsConstructor;
 
 @Entity
+@RequiredArgsConstructor
 public class ProductNotificationHistory {
 
     @Id
@@ -19,4 +21,9 @@ public class ProductNotificationHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
+
+    public ProductNotificationHistory(Product product) {
+        this.product = product;
+        this.restockCount = product.getRestockCount();
+    }
 }

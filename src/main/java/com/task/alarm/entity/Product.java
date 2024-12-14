@@ -20,4 +20,8 @@ public class Product {
         this.restockCount += restockCount;
         this.stockCount += stockCount;
     }
+
+    public void updateStockCount(int stockCount) {
+        this.stockCount = stockCount;
+    }
 }

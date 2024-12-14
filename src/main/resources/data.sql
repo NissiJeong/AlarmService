@@ -19,6 +19,24 @@ insert into user(email, mobile_number) values("banisii6@naver.com", "01034118840
 insert into user(email, mobile_number) values("banisii7@naver.com", "01034118840");
 insert into user(email, mobile_number) values("banisii8@naver.com", "01034118840");
 insert into user(email, mobile_number) values("banisii9@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
+insert into user(email, mobile_number) values("banisii10@naver.com", "01034118840");
 
 insert into product_user_notification(product_id, user_id, is_active, created_at) values(1, 1, 1, now());
 insert into product_user_notification(product_id, user_id, is_active, created_at) values(1, 2, 1, now());
@@ -30,3 +48,9 @@ insert into product_user_notification(product_id, user_id, is_active, created_at
 insert into product_user_notification(product_id, user_id, is_active, created_at) values(1, 8, 1, now());
 insert into product_user_notification(product_id, user_id, is_active, created_at) values(1, 9, 1, now());
 insert into product_user_notification(product_id, user_id, is_active, created_at) values(1, 10, 1, now());
+insert into product_user_notification(product_id, user_id, is_active, created_at) values(1, 11, 1, now());
+insert into product_user_notification(product_id, user_id, is_active, created_at) values(1, 12, 1, now());
+insert into product_user_notification(product_id, user_id, is_active, created_at) values(1, 13, 1, now());
+insert into product_user_notification(product_id, user_id, is_active, created_at) values(1, 14, 1, now());
+insert into product_user_notification(product_id, user_id, is_active, created_at) values(1, 15, 1, now());
+insert into product_user_notification(product_id, user_id, is_active, created_at) values(1, 16, 1, now());
