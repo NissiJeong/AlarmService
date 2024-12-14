@@ -40,7 +40,7 @@
       - ProductNotificationHistory: 상품별 재입고 알림 히스토리
       - ProductUserNotification: 상품별 재입고 알림을 설정한 유저
       - ProductUserNotificationHistory: 상품 + 유저별 알림 히스토리<br>
-[ERD]
+[ERD]<br>
 ![image](https://github.com/user-attachments/assets/1e843b7f-e5a0-4d64-9777-67a2b5056ded)
 ### 알림 기능 구현 및 flow
   - Redis Streams 를 이용한 알림 기능 구현
