@@ -3,9 +3,11 @@ package com.task.alarm.repository;
 import com.task.alarm.entity.Product;
 import com.task.alarm.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,8 +17,9 @@ public class RedisRepository {
     private final RedisTemplate<String, String> redisTemplate;
 
     public void saveProductUserNotificationInfo(Product product, User user) {
-        String key = "product:"+product.getId()+"restockcnt:"+product.getRestockCount()+":alarm";
-        redisTemplate.opsForValue().set(key, String.valueOf(user.getId()));
+        String key = "product:"+product.getId()+":restockcnt:"+product.getRestockCount()+":alarm";
+        ListOperations<String, String> listOps = redisTemplate.opsForList();//.set(key, String.valueOf(user.getId()));
+        listOps.rightPush(key, String.valueOf(user.getId()));
     }
 
     public void saveProductStockCount(Product product) {
@@ -32,7 +35,7 @@ public class RedisRepository {
     }
 
     public void saveLastNotificationUser(Product product, User user) {
-        String key = "product:"+product.getId()+"restockcnt:"+product.getStockCount()+":lastNotification";
+        String key = "product:"+product.getId()+":restockcnt:"+product.getRestockCount()+":lastNotification";
         redisTemplate.opsForValue().set(key, String.valueOf(user.getId()));
     }
 
@@ -41,8 +44,8 @@ public class RedisRepository {
         redisTemplate.opsForValue().set(key, status);
     }
 
-    public Set<String> getProductStockKey() {
-        return redisTemplate.keys("product:*:stock");
+    public Set<String> getKeySet(String pattern) {
+        return redisTemplate.keys(pattern);
     }
 
     public void decreaseProductStock(Long productId) {
@@ -50,5 +53,19 @@ public class RedisRepository {
 
         if(Integer.parseInt(Objects.requireNonNull(redisTemplate.opsForValue().get(key))) >= 10)
             redisTemplate.opsForValue().decrement(key, 10);
+    }
+
+    public Object getValue(String key) {
+        return redisTemplate.opsForValue().get(key);
+    }
+
+    // 전체 리스트 가져오기
+    public List<String> getEntireList(String key) {
+        ListOperations<String, String> listOps = redisTemplate.opsForList();
+        return listOps.range(key, 0, -1); // 전체 리스트 가져오기
+    }
+
+    public void deleteDataByKey(String key) {
+        redisTemplate.delete(key);
     }
 }

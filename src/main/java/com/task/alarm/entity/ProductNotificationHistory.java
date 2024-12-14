@@ -26,4 +26,9 @@ public class ProductNotificationHistory {
         this.product = product;
         this.restockCount = product.getRestockCount();
     }
+
+    public void updateRestockAlarmStatusAndLastAlarmUserId(String status, Long lastAlarmUserId) {
+        this.restockAlarmStatus = RestockAlarmStatusEnum.valueOf(status);
+        this.lastAlarmUserId = lastAlarmUserId;
+    }
 }

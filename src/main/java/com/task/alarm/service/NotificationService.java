@@ -105,10 +105,5 @@ public class NotificationService {
             }
             checkIndex++;
         }
-
-        // 알림 종료후 Redis 와 MySQL 데이터 동기화
-        // 1. 마지막 알림 사용자
-        // 2. 상품 재입고 알림 사용자 내역
-        // 3. 알림 전송 상태
     }
 }
