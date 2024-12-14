@@ -11,7 +11,8 @@ public class ProductNotificationHistory {
 
     private int restockCount;
 
-    private String restockAlarmStatus;
+    @Enumerated(value = EnumType.STRING)
+    private RestockAlarmStatusEnum restockAlarmStatus;
 
     private Long lastAlarmUserId;
 

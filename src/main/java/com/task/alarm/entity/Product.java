@@ -1,8 +1,10 @@
 package com.task.alarm.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Product {
 
     @Id
@@ -12,5 +14,10 @@ public class Product {
 
     private int restockCount;
 
-    private String stockStatus;
+    private int stockCount;
+
+    public void updateRestockCountAndStockCount(int restockCount, int stockCount) {
+        this.restockCount += restockCount;
+        this.stockCount += stockCount;
+    }
 }
