@@ -17,4 +17,14 @@ public class NotificationController {
     public ResponseEntity<?> restockAndNotification (@PathVariable Long productId) {
         return notificationService.restockAndNotification(productId);
     }
+
+    @PostMapping(value = "/admin/products/{productId}/notifications/re-stock")
+    public ResponseEntity<?> adminRestockAndNotification (@PathVariable Long productId) {
+        return notificationService.adminRestockAndNotification(productId);
+    }
+
+    @PostMapping(value = "/products/{productId}/stock/soldout")
+    public ResponseEntity<?> productStockSoldOut (@PathVariable Long productId) {
+        return notificationService.productStockSoldOut(productId);
+    }
 }

@@ -28,7 +28,7 @@ public class DataSynchronizeService {
 
     // 스케쥴 돌면서 1초에 한번씩 재고 수량 -1
     // Redis 에 있는 수량 decrease 후 모든 상품 처리하면 MySQL 과 동기화
-    @Scheduled(fixedRate = 1000)
+    // @Scheduled(fixedRate = 1000)
     @Transactional
     public void decreaseProductStock() {
         String lockKey = "lock:sync:product";

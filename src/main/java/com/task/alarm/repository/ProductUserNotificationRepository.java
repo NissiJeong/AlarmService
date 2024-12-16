@@ -19,4 +19,6 @@ public interface ProductUserNotificationRepository extends JpaRepository<Product
                 order by pun.id asc
                   """)
     List<ProductUserNotification> findAllByProductOrderByIdAsc(@Param("productId") Long productId);
+
+    List<ProductUserNotification> findByProductAndIdLessThanOrderByIdAsc(Product product, Long lastAlarmUserId);
 }

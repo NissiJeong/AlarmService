@@ -32,39 +32,22 @@ public class NotificationService {
     // 상품 재입고 회차 1 증가 했다는 것은 10개의 재고가 증가한다고 가정
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ResponseEntity<?> restockAndNotification(Long productId) {
-        String lockKey = "lock:product:alarm:"+productId;
-        RLock lock = redissonClient.getLock(lockKey);
 
-        boolean available = false;
+        // 상품이 없으면 알림 발송 못 함
+        Product product = productRepository.findById(productId).orElseThrow(() ->
+                new NullPointerException("해당 상품을 찾을 수 없습니다.")
+        );
 
-        try {
-            available = lock.tryLock(10, 1, TimeUnit.SECONDS);
+        // 재입고 회차 1 증가, 10개 재고 증가
+        product.updateRestockCountAndStockCount(1, 10);
+        // ProductNotificationHistory (상품별 재입고 알림 히스토리) 에 데이터 저장
+        ProductNotificationHistory productNotificationHistory = new ProductNotificationHistory(product);
+        productNotificationHistoryRepository.save(productNotificationHistory);
 
-            if(!available) {
-                throw new IllegalArgumentException("Lock 획득 실패");
-            }
+        // 알림 보내기
+        sendAlarm(product);
 
-            // 상품이 없으면 알림 발송 못 함
-            Product product = productRepository.findById(productId).orElseThrow(() ->
-                    new NullPointerException("해당 상품을 찾을 수 없습니다.")
-            );
-
-            // 재입고 회차 1 증가, 10개 재고 증가
-            product.updateRestockCountAndStockCount(1, 10);
-            // ProductNotificationHistory (상품별 재입고 알림 히스토리) 에 데이터 저장
-            ProductNotificationHistory productNotificationHistory = new ProductNotificationHistory(product);
-            productNotificationHistoryRepository.save(productNotificationHistory);
-
-            // 알림 보내기
-            sendAlarm(product);
-
-            return ResponseEntity.ok(product);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if(available)
-                lock.unlock();
-        }
+        return ResponseEntity.ok(product);
     }
 
     private void sendAlarm(Product product) {
@@ -105,5 +88,43 @@ public class NotificationService {
             }
             checkIndex++;
         }
+    }
+
+    // admin 호출 되는 순간 마지막으로 알림 전송한 사람 이후로 알림 전송 시작해야 함.
+    // product 의 id, restock count 로 상태, 마지막 알림 전송된 사용자 가져와서 상태값이 에러로 시작된 경우 재 전송 시작
+    public ResponseEntity<?> adminRestockAndNotification(Long productId) {
+        Product product = productRepository.findById(productId).orElseThrow(()->
+            new NullPointerException("해당 상품이 존재하지 않습니다.")
+        );
+        // 상품별, 회차별 재입고 알림 발송상태, 마지막 발송 유저 아이디 가져오기
+        ProductNotificationHistory productNotificationHistory = productNotificationHistoryRepository.findByProductIdAndRestockCount(productId, product.getRestockCount());
+
+        RestockAlarmStatusEnum alaramStatus = productNotificationHistory.getRestockAlarmStatus();
+        Long lastAlarmUserId = productNotificationHistory.getLastAlarmUserId();
+        // sold out or error 인 경우 마지막 발송 유저 이후로 다시 전송
+        if(alaramStatus.equals(RestockAlarmStatusEnum.ERROR) || alaramStatus.equals(RestockAlarmStatusEnum.SOLD_OUT)) {
+            // 재입고 알림 설정 유저 select
+            List<ProductUserNotification> alarmUsers = productUserNotificationRepository.findByProductAndIdLessThanOrderByIdAsc(product, lastAlarmUserId);
+
+            for (ProductUserNotification alarmUser : alarmUsers) {
+                System.out.println("alarmUser.getUser().getId() = " + alarmUser.getUser().getId());
+            }
+        }
+
+        return null;
+    }
+
+    @Transactional
+    public ResponseEntity<?> productStockSoldOut(Long productId) {
+        //Redis 재고 카운트 0 으로 변경, MySQL 재고 카운트 0으로 변경
+        Product product = productRepository.findById(productId).orElseThrow(()->
+                new NullPointerException("해당 상품이 존재하지 않습니다.")
+        );
+
+        // MySQL0, Redis 0 으로 변경
+        product.updateStockCount(0);
+        redisRepository.saveProductStockCount(product);
+
+        return ResponseEntity.ok(product);
     }
 }

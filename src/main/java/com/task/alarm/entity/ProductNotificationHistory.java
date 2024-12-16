@@ -1,10 +1,12 @@
 package com.task.alarm.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Entity
 @RequiredArgsConstructor
+@Getter
 public class ProductNotificationHistory {
 
     @Id
