@@ -71,7 +71,7 @@ public class DataSynchronizeService {
     // 1. 마지막 알림 사용자
     // 2. 상품 재입고 알림 사용자 내역
     // 3. 알림 전송 상태
-    @Scheduled(fixedRate = 10000)
+    // @Scheduled(fixedRate = 10000)
     @Transactional
     public void synchronizeRedisMysqlData() {
         String lockKey = "lock:sync:product:restock:lastAlarmUser";

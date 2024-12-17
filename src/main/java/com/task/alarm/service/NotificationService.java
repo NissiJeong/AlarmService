@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -57,10 +59,6 @@ public class NotificationService {
         // 알림 전송 시점에 재고 수량 MySQL 에서 가져와서 Redis 에 저장
         redisRepository.saveProductStockCount(product);
 
-        // 한 명 씩 알림 보내면서 재고 체크 하고 없으면 알림 중지
-        // 알림 메시지 1초에 최대 500 개의 요청: MySQL 에 직접 저장하면 비효율적
-        // Redis 에 productId, userId 키로 잡아서 저장
-        // 추후 Redis 와 MySQL 동기화
         int checkIndex = 0;
         for(ProductUserNotification productUserNoti : alarmUsers) {
             // 재고 수량 체크

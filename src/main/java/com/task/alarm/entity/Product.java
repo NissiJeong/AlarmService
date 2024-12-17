@@ -2,9 +2,11 @@ package com.task.alarm.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Product {
 
     @Id
@@ -15,6 +17,11 @@ public class Product {
     private int restockCount;
 
     private int stockCount;
+
+    public Product(int restockCount, int stockCount) {
+        this.restockCount = restockCount;
+        this.stockCount = stockCount;
+    }
 
     public void updateRestockCountAndStockCount(int restockCount, int stockCount) {
         this.restockCount += restockCount;
