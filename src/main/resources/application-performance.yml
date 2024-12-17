@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/alarm
+    username: root
+    password: 1!wjdslttl
+    hikari:
+      maximum-pool-size: 20
+  logging:
+    level:
+      root: ERROR
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  config:
+    activate:
+      on-profile: performance
