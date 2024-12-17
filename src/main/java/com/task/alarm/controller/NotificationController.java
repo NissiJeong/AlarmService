@@ -24,7 +24,7 @@ public class NotificationController {
     }
 
     @PostMapping(value = "/products/{productId}/stock/soldout")
-    public ResponseEntity<?> productStockSoldOut (@PathVariable Long productId) {
-        return notificationService.productStockSoldOut(productId);
+    public void productStockSoldOut (@PathVariable Long productId) {
+        notificationService.productStockSoldOut(productId);
     }
 }

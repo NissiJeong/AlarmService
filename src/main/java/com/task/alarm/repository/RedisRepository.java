@@ -22,6 +22,12 @@ public class RedisRepository {
         listOps.rightPush(key, String.valueOf(user.getId()));
     }
 
+    public void saveProductUserNotificationInfoList(Product product, List<String> userIds) {
+        String key = "product:"+product.getId()+":restockcnt:"+product.getRestockCount()+":alarm";
+        ListOperations<String, String> listOps = redisTemplate.opsForList();//.set(key, String.valueOf(user.getId()));
+        listOps.rightPushAll(key, userIds);
+    }
+
     public void saveProductStockCount(Product product) {
         String key = "product:"+product.getId()+":stock";
         int value = product.getStockCount();

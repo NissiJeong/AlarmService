@@ -1,5 +1,6 @@
 package com.task.alarm.service;
 
+import com.task.alarm.dto.StockChangeEvent;
 import com.task.alarm.entity.Product;
 import com.task.alarm.entity.ProductNotificationHistory;
 import com.task.alarm.entity.ProductUserNotification;
@@ -9,17 +10,13 @@ import com.task.alarm.repository.ProductRepository;
 import com.task.alarm.repository.ProductUserNotificationRepository;
 import com.task.alarm.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +26,8 @@ public class NotificationService {
     private final ProductNotificationHistoryRepository productNotificationHistoryRepository;
     private final ProductUserNotificationRepository productUserNotificationRepository;
     private final RedisRepository redisRepository;
-    private final RedissonClient redissonClient;
+    private final ApplicationEventPublisher eventPublisher;
+    private final StockChangeEvenetListener stockChangeEvenetListener;
 
     // 상품 재입고 회차 1 증가 했다는 것은 10개의 재고가 증가한다고 가정
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -47,7 +45,8 @@ public class NotificationService {
         productNotificationHistoryRepository.save(productNotificationHistory);
 
         // 알림 보내기
-        sendAlarm(product);
+        //sendAlarm(product);
+        stockChangeEvenetListener.handleStockChangeEvent(new StockChangeEvent(product.getId(), product.getStockCount()));
 
         return ResponseEntity.ok(product);
     }
@@ -112,8 +111,10 @@ public class NotificationService {
         return null;
     }
 
+    // 임시로 sold out 이벤트 발생시켜서 알림 보내는 로직에 이벤트 전송
+    // 실제라면 구매가 이루어질 떄마다 재고가 decrease 되며 재고가 0 이 되는 경우 알림을 중단하는 기능 구현 가능.
     @Transactional
-    public ResponseEntity<?> productStockSoldOut(Long productId) {
+    public void productStockSoldOut(Long productId) {
         //Redis 재고 카운트 0 으로 변경, MySQL 재고 카운트 0으로 변경
         Product product = productRepository.findById(productId).orElseThrow(()->
                 new NullPointerException("해당 상품이 존재하지 않습니다.")
@@ -123,6 +124,6 @@ public class NotificationService {
         product.updateStockCount(0);
         redisRepository.saveProductStockCount(product);
 
-        return ResponseEntity.ok(product);
+        eventPublisher.publishEvent(new StockChangeEvent(productId, 0));
     }
 }
