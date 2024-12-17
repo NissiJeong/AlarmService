@@ -23,3 +23,10 @@ spring:
   config:
     activate:
       on-profile: performance
+resilience4j:
+  ratelimiter:
+    instances:
+      sendNotificationLimiter: # RateLimiter 이름
+        limitForPeriod: 100 # 1초 동안 허용되는 최대 요청 수
+        limitRefreshPeriod: 1s # 제한 주기 (1초마다 리셋)
+        timeoutDuration: 0 # 제한 초과 시 대기 시간 (0초)

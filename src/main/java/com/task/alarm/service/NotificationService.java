@@ -45,46 +45,9 @@ public class NotificationService {
         productNotificationHistoryRepository.save(productNotificationHistory);
 
         // 알림 보내기
-        //sendAlarm(product);
         stockChangeEvenetListener.handleStockChangeEvent(new StockChangeEvent(product.getId(), product.getStockCount()));
 
         return ResponseEntity.ok(product);
-    }
-
-    private void sendAlarm(Product product) {
-        // 재입고 알림 설정 유저 select
-        List<ProductUserNotification> alarmUsers = productUserNotificationRepository.findAllByProductOrderByIdAsc(product.getId());
-
-        // 알림 전송 시점에 재고 수량 MySQL 에서 가져와서 Redis 에 저장
-        redisRepository.saveProductStockCount(product);
-
-        int checkIndex = 0;
-        for(ProductUserNotification productUserNoti : alarmUsers) {
-            // 재고 수량 체크
-            int stockCount = redisRepository.findProductStockCount(product);
-            // 재고 수량이 0이면 더이상 알림 보내지 않음.
-            if(stockCount == 0) {
-                // 품절에 의한 알림 발송 중단 상태 저장
-                redisRepository.saveProductRestockStatus(productUserNoti.getProduct(), RestockAlarmStatusEnum.SOLD_OUT.getStatus());
-
-                // 마지막으로 알림 보낸 사용자 저장
-                redisRepository.saveLastNotificationUser(productUserNoti.getProduct(), productUserNoti.getUser());
-                break;
-            }
-            // 알림 설정 유저에게 알림 send
-
-            // 알림 내용 저장 Redis 에 productId, userId 키로 잡아서 저장
-            redisRepository.saveProductUserNotificationInfo(productUserNoti.getProduct(), productUserNoti.getUser());
-            // 마지막 사용자인 경우
-            if(checkIndex == alarmUsers.size()-1) {
-                // 알림 완료 상태 저장
-                redisRepository.saveProductRestockStatus(productUserNoti.getProduct(), RestockAlarmStatusEnum.COMPLETED.getStatus());
-
-                // 마지막으로 알림 보낸 사용자 저장
-                redisRepository.saveLastNotificationUser(productUserNoti.getProduct(), productUserNoti.getUser());
-            }
-            checkIndex++;
-        }
     }
 
     // admin 호출 되는 순간 마지막으로 알림 전송한 사람 이후로 알림 전송 시작해야 함.
@@ -104,6 +67,7 @@ public class NotificationService {
             List<ProductUserNotification> alarmUsers = productUserNotificationRepository.findByProductAndIdLessThanOrderByIdAsc(product, lastAlarmUserId);
 
             for (ProductUserNotification alarmUser : alarmUsers) {
+                //TODO 상세 로직 구현 필요.
                 System.out.println("alarmUser.getUser().getId() = " + alarmUser.getUser().getId());
             }
         }
